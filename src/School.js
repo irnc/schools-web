@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { List, ListItemIcon, ListItemText } from '@material-ui/core';
 import TelegramIcon from '@material-ui/icons/Telegram';
 import LinkIcon from '@material-ui/icons/Link';
 import _ from 'lodash';
 import { VIEW_FORM_ID, REFERENCE_ID_FORM_FIELD } from './config';
 import * as data from './data';
-
-function ListItemLink(props) {
-  return <ListItem button component="a" {...props} />;
-}
+import ListItemLink from './components/ListItemLink';
 
 function PrettyLink(props) {
   const { url, description } = props.resource;

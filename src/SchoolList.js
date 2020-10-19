@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import SchoolIcon from '@material-ui/icons/School';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ListSubheader } from '@material-ui/core';
 import _ from 'lodash';
-import './App.css';
 import {
-  Link,
   useParams
 } from 'react-router-dom';
 import * as data from './data';
+import ListItemLink from './components/ListItemLink';
 
 const useStyles = makeStyles((theme) => ({
   ul: {
@@ -63,11 +63,12 @@ export default function SchoolList(props) {
             <ul className={classes.ul}>
               <ListSubheader>{group}</ListSubheader>
               {_.orderBy(schools, normalizeSchoolName).map(school => (
-                <ListItem button key={school.school_osm_id}>
-                  <Link to={`/school/${school.school_osm_id}`}>
-                    <ListItemText primary={school.school_name || 'Школа'} />
-                  </Link>
-                </ListItem>
+                <ListItemLink key={school.school_osm_id} href={`/school/${school.school_osm_id}`}>
+                  <ListItemIcon>
+                    <SchoolIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={school.school_name || 'Школа'} />
+                </ListItemLink>
               ))}
             </ul>
           </li>
