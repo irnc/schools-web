@@ -1,8 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import TelegramIcon from '@material-ui/icons/Telegram';
+import LinkIcon from '@material-ui/icons/Link';
 import _ from 'lodash';
 import { VIEW_FORM_ID, REFERENCE_ID_FORM_FIELD } from './config';
 import * as data from './data';
+
+function ListItemLink(props) {
+  return <ListItem button component="a" {...props} />;
+}
+
+function PrettyLink(props) {
+  const { url, description } = props.resource;
+  const telegramPrefix = 'https://t.me/';
+
+  if (url.startsWith(telegramPrefix)) {
+    const channel = `@${url.substr(telegramPrefix.length)}`;
+
+    return (
+      <>
+        <ListItemIcon>
+          <TelegramIcon />
+        </ListItemIcon>
+        <ListItemText primary={channel} secondary={description}></ListItemText>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <ListItemIcon>
+          <LinkIcon />
+        </ListItemIcon>
+        <ListItemText primary={url} secondary={description}></ListItemText>
+      </>
+    );
+  }
+}
 
 export default function School(props) {
   const [place, setPlace] = useState();
@@ -54,11 +88,13 @@ export default function School(props) {
       <p>
         <a href={getLinkToForm(schoolId)}>Добавить ресурс</a>
       </p>
-      <ul>
+      <List>
         {resources.map((r, i) => (
-          <li key={i}>{r.url}</li>
+          <ListItemLink key={i} href={r.url}>
+            <PrettyLink resource={r} />
+          </ListItemLink>
         ))}
-      </ul>
+      </List>
     </div>
   )
 }
