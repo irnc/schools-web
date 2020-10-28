@@ -5,6 +5,9 @@ const fetchJson = async (path) => {
   return res.json();
 }
 
+/**
+ * @return {Promise<[{ name: string, osm_id: string, hierarchy: string[] }]>}
+ */
 export const fetchPlaces = () => {
   return fetchJson('places');
 };

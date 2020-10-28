@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
+import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
@@ -7,11 +8,60 @@ import {
 } from 'react-router-dom';
 import * as data from './data';
 
+const useStyles = makeStyles((theme) => ({
+  option: {
+    flexDirection: 'column',
+    alignItems: 'start',
+  },
+  disambigLine: {
+    ...theme.typography.caption,
+    color: theme.palette.text.secondary,
+  }
+}));
+
+export function disambigPlaces(places) {
+  return _(places)
+    .groupBy('name')
+    .mapValues(sameNamedPlaces => {
+      if (sameNamedPlaces.length === 1) {
+        return sameNamedPlaces;
+      }
+
+      const area = level => place => place.hierarchy[place.hierarchy.length - level];
+      const counts = level => _.countBy(sameNamedPlaces, area(level));
+
+      return sameNamedPlaces.map((place) => {
+        const disambigLine = [];
+        let level = 1;
+
+        while (level <= place.hierarchy.length) {
+          const levelArea = area(level)(place);
+
+          disambigLine.push(levelArea);
+
+          if (counts(level)[levelArea] === 1) {
+            break;
+          }
+
+          level += 1;
+        }
+
+        return { disambigLine: disambigLine.reverse().join(', '), ...place };
+      });
+    })
+    .values()
+    .flatten()
+    .value();
+};
+
 export default function (props) {
   const [places, setPlaces] = useState([]);
+  const classes = useStyles();
 
   useEffect(() => {
-    data.fetchPlaces().then(setPlaces);
+    data.fetchPlaces().then(places => {
+      setPlaces(disambigPlaces(places));
+    });
   }, []);
 
   const { placeOsmId, ...autocompleteProps } = props;
@@ -47,8 +97,15 @@ export default function (props) {
   return (
     <Autocomplete
       id="combo-box-demo"
+      classes={{ option: classes.option }}
       options={places}
       getOptionLabel={(option) => option.name}
+      renderOption={(option) => (
+        <> 
+          {option.name}
+          { option.disambigLine && <span className={classes.disambigLine}>{option.disambigLine}</span>}
+        </>
+      )}
       value={place}
       renderInput={(params) => <TextField {...params} label="Населённый пункт" variant="outlined" />}
       {...autocompleteProps}
