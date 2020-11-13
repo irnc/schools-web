@@ -80,7 +80,14 @@ export default function School(props) {
         <Link to={`/place/${place.osm_id}`}>Назад к списку школ</Link>
       }
       <h1>{group[0]?.school_name}</h1>
-      <p>{geo?.lat},{geo?.lon}</p>
+
+      <iframe
+        title={`${group[0]?.school_name} на карте`}
+        width="100%" height="250" frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0"
+        src={geo?.bbox && `https://www.openstreetmap.org/export/embed.html?bbox=${geo?.bbox}&amp;layer=mapnik`}
+        style={{ border: '1px solid black' }}></iframe><br/>
+      <small><a href={`https://www.openstreetmap.org/#map=17/${geo?.lat}/${geo?.lon}`}>Показать большую карту</a></small>
+
       <p>{location}</p>
       <p>
         <a href={getLinkToForm(schoolId)}>Добавить ресурс</a>
